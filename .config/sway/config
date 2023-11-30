@@ -1,10 +1,9 @@
-bindsym XF86MonBrightnessUp exec "brightnessctl s 9%+"
-bindsym XF86MonBrightnessDown exec "brightnessctl s 9%-"
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +3%
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -3%
-bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
-
+# GTK
+# This is the only place where you must set GTK scaling
+exec_always {
+    gsettings set org.gnome.desktop.interface text-scaling-factor 1.5
+    gsettings set org.gnome.desktop.interface scaling-factor 1.5
+}
 
 # Logo key. Use Mod1 for Alt.
 set $mod Mod4
@@ -24,12 +23,10 @@ set $menu bemenu-run --binding vim -i -l 20 --fb "#1e1e2e" --ff "#94e2d5" --nb "
 
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
-exec --no-startup-id nm-applet --indicator
-
 input "type:keyboard" {
     xkb_layout us,de
     xkb_variant ,nodeadkeys
-    xkb_options grp:alt_shift_toggle,ctrl:swapcaps
+    xkb_options grp:alt_shift_toggle
 }
 
 
@@ -38,18 +35,13 @@ input "type:pointer" {
     pointer_accel "0.1"
 }
 
-input "type:touchpad" {
-   natural_scroll "enabled" 
-   scroll_factor "0.25"
-   tap "enabled"
-}
+exec --no-startup-id nm-applet --indicator
 
-
-output * bg $HOME/Pictures/Wallpapers/wallpaper.png fill
+output * bg $HOME/Pictures/Wallpapers/arch-black-4k.png fill
 
 
 # Example configuration:
-output HDMI-A-1 resolution 3840x2160 position 0,1
+output DP-1 resolution 3840x2160 position 0,0
 
 ### Idle configuration
 #
@@ -72,7 +64,7 @@ exec mako --config $HOME/.config/mako/config
 
     # Kill focused window
     bindsym $mod+Shift+q kill
-    
+
     #Screenshot and copy to clipboard
     bindsym $mod+Shift+s exec grimshot save area
 
