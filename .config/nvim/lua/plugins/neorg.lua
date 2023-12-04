@@ -8,10 +8,13 @@ return {
       load = {
         ["core.defaults"] = {},
         ["core.concealer"] = {},
+        ["core.export"] = {},
+        ["core.export.markdown"] = {},
+        ["core.summary"] = {},
         ["core.dirman"] = {
           config = {
             workspaces = {
-              home = "~/workspace/git/ausbildung/",
+              default = "~/workspace/neorg",
             },
           },
         },
