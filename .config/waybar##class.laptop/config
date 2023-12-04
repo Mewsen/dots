@@ -21,9 +21,9 @@
     "modules-left": [
         "sway/workspaces",
         "sway/mode",
+        "sway/window"
     ],
     "modules-center": [
-        "sway/window"
     ],
     "modules-right": [
         "network",
@@ -70,12 +70,12 @@
                     "on-scroll"     : 1,
                     "on-click-right": "mode",
                     "format": {
-                              "months":     "<span color='#ffead3'><b>{}</b></span>",
-                              "days":       "<span color='#ecc6d9'><b>{}</b></span>",
-                              "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
-                              "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
-                              "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
-                              }
+                        "months":     "<span color='#cba6f7'><b>{}</b></span>",
+                        "days":       "<span color='#b4befe'><b>{}</b></span>",
+                        "weeks":      "<span color='#89b4fa'><b>W{}</b></span>",
+                        "weekdays":   "<span color='#cdd6f4'><b>{}</b></span>",
+                        "today":      "<span color='#f38ba8'><b><u>{}</u></b></span>"
+                    }
                     },
         "actions":  {
                     "on-click-right": "mode",
@@ -127,8 +127,8 @@
     },
 
     "sway/window": {
-        "format": "{}",
-        "max-length": 120
+        "format": "  |    {}",
+        "max-length": 60
     },
 
     "sway/workspaces": {
