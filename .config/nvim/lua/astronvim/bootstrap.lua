@@ -17,7 +17,7 @@ astronvim.install.config = vim.fn.stdpath("config"):gsub("[^/\\]+$", "astronvim"
 -- check if they are the same, protects against NVIM_APPNAME use for isolated install
 if astronvim.install.home ~= astronvim.install.config then
   vim.opt.rtp:append(astronvim.install.config)
-  --- supported astronvim user conifg folders
+  --- supported astronvim user config folders
   table.insert(astronvim.supported_configs, astronvim.install.config)
 end
 
@@ -42,7 +42,7 @@ local function load_module_file(module)
     -- if successful at loading, set the return variable
     if status_ok then
       out = loaded_module
-      -- if unsuccessful, throw an error
+    -- if unsuccessful, throw an error
     else
       vim.api.nvim_err_writeln("Error loading file: " .. found_file .. "\n\n" .. loaded_module)
     end
@@ -63,11 +63,11 @@ local function func_or_extend(overrides, default, extend)
     if type(overrides) == "table" then
       local opts = overrides or {}
       default = default and vim.tbl_deep_extend("force", default, opts) or opts
-      -- if the override is  a function, call it with the default and overwrite default with the return value
+    -- if the override is  a function, call it with the default and overwrite default with the return value
     elseif type(overrides) == "function" then
       default = overrides(default)
     end
-    -- if extend is set to false and we have a provided override, simply override the default
+  -- if extend is set to false and we have a provided override, simply override the default
   elseif overrides ~= nil then
     default = overrides
   end

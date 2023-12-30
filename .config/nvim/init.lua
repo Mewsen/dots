@@ -14,13 +14,10 @@ end
 if astronvim.default_colorscheme then
   if not pcall(vim.cmd.colorscheme, astronvim.default_colorscheme) then
     require("astronvim.utils").notify(
-      "Error setting up colorscheme: " .. astronvim.default_colorscheme,
+      ("Error setting up colorscheme: `%s`"):format(astronvim.default_colorscheme),
       vim.log.levels.ERROR
     )
   end
 end
-
-
-require('leap').add_default_mappings()
 
 require("astronvim.utils").conditional_func(astronvim.user_opts("polish", nil, false), true)

@@ -23,6 +23,8 @@ end
 ---@param quiet? boolean Whether or not to notify on completion of reloading
 ---@return boolean # True if the reload was successful, False otherwise
 function M.reload(quiet)
+  local was_modifiable = vim.opt.modifiable:get()
+  if not was_modifiable then vim.opt.modifiable = true end
   local core_modules = { "astronvim.bootstrap", "astronvim.options", "astronvim.mappings" }
   local modules = vim.tbl_filter(function(module) return module:find "^user%." end, vim.tbl_keys(package.loaded))
 
@@ -36,6 +38,7 @@ function M.reload(quiet)
       success = false
     end
   end
+  if not was_modifiable then vim.opt.modifiable = false end
   if not quiet then -- if not quiet, then notify of result
     if success then
       M.notify("AstroNvim successfully reloaded", vim.log.levels.INFO)
@@ -129,7 +132,7 @@ end
 
 --- Serve a notification with a title of AstroNvim
 ---@param msg string The notification body
----@param type number|nil The type of the notification (:help vim.log.levels)
+---@param type? number The type of the notification (:help vim.log.levels)
 ---@param opts? table The nvim-notify options to use (:help notify-options)
 function M.notify(msg, type, opts)
   vim.schedule(function() vim.notify(msg, type, M.extend_tbl({ title = "AstroNvim" }, opts)) end)
@@ -137,13 +140,21 @@ end
 
 --- Trigger an AstroNvim user event
 ---@param event string The event name to be appended to Astro
-function M.event(event)
-  vim.schedule(function() vim.api.nvim_exec_autocmds("User", { pattern = "Astro" .. event, modeline = false }) end)
+---@param delay? boolean Whether or not to delay the event asynchronously (Default: true)
+function M.event(event, delay)
+  local emit_event = function() vim.api.nvim_exec_autocmds("User", { pattern = "Astro" .. event, modeline = false }) end
+  if delay == false then
+    emit_event()
+  else
+    vim.schedule(emit_event)
+  end
 end
 
 --- Open a URL under the cursor with the current operating system
 ---@param path string The path of the file to open with the system opener
 function M.system_open(path)
+  -- TODO: REMOVE WHEN DROPPING NEOVIM <0.10
+  if vim.ui.open then return vim.ui.open(path) end
   local cmd
   if vim.fn.has "win32" == 1 and vim.fn.executable "explorer" == 1 then
     cmd = { "cmd.exe", "/K", "explorer" }
@@ -180,7 +191,7 @@ end
 ---@return table # A button entity table for an alpha configuration
 function M.alpha_button(sc, txt)
   -- replace <leader> in shortcut text with LDR for nicer printing
-  local sc_ = sc:gsub("%s", ""):gsub("LDR", "<leader>")
+  local sc_ = sc:gsub("%s", ""):gsub("LDR", "<Leader>")
   -- if the leader is set, replace the text with the actual leader key for nicer printing
   if vim.g.mapleader then sc = sc:gsub("LDR", vim.g.mapleader == " " and "SPC" or vim.g.mapleader) end
   -- return the button entity to display the correct text and send the correct keybinding on press
@@ -195,7 +206,7 @@ function M.alpha_button(sc, txt)
       position = "center",
       text = txt,
       shortcut = sc,
-      cursor = 5,
+      cursor = -2,
       width = 36,
       align_shortcut = "right",
       hl = "DashboardCenter",
@@ -209,7 +220,7 @@ end
 ---@return boolean available # Whether the plugin is available
 function M.is_available(plugin)
   local lazy_config_avail, lazy_config = pcall(require, "lazy.core.config")
-  return lazy_config_avail and lazy_config.plugins[plugin] ~= nil
+  return lazy_config_avail and lazy_config.spec.plugins[plugin] ~= nil
 end
 
 --- Resolve the options table for a given plugin with lazy
@@ -255,6 +266,21 @@ function M.which_key_register()
   end
 end
 
+--- Get an empty table of mappings with a key for each map mode
+---@return table<string,table> # a table with entries for each map mode
+function M.empty_map_table()
+  local maps = {}
+  for _, mode in ipairs { "", "n", "v", "x", "s", "o", "!", "i", "l", "c", "t" } do
+    maps[mode] = {}
+  end
+  if vim.fn.has "nvim-0.10.0" == 1 then
+    for _, abbr_mode in ipairs { "ia", "ca", "!a" } do
+      maps[abbr_mode] = {}
+    end
+  end
+  return maps
+end
+
 --- Table based API for setting keybindings
 ---@param map_table table A nested table where the first key is the vim mode, the second key is the key to map, and the value is the function to set the mapping to
 ---@param base? table A base set of options to set on every keybinding
@@ -274,6 +300,7 @@ function M.set_mappings(map_table, base)
           keymap_opts[1] = nil
         end
         if not cmd or keymap_opts.name then -- if which-key mapping, queue it
+          if not keymap_opts.name then keymap_opts.name = keymap_opts.desc end
           if not M.which_key_queue then M.which_key_queue = {} end
           if not M.which_key_queue[mode] then M.which_key_queue[mode] = {} end
           M.which_key_queue[mode][keymap] = keymap_opts
