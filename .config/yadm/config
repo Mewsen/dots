@@ -1,5 +1,5 @@
 [pull]
-	rebase = false
+	rebase = true
 	ff = only
 [yadm]
 	cipher = openssl
