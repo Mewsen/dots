@@ -67,6 +67,7 @@ exec mako --config $HOME/.config/mako/config
 
     #Screenshot and copy to clipboard
     bindsym $mod+Shift+s exec grimshot save area
+    bindsym $mod+Shift+Ctrl+s exec grimshot save active
 
     # Start your launcher
     bindsym $mod+d exec $menu
