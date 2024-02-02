@@ -9,6 +9,9 @@ return {
       opts = { handlers = {} },
     },
     {
+      "theHamsta/nvim-dap-virtual-text",
+    },
+    {
       "rcarriga/nvim-dap-ui",
       opts = { floating = { border = "rounded" } },
       config = require "plugins.configs.nvim-dap-ui",

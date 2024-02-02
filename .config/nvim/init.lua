@@ -20,6 +20,13 @@ if astronvim.default_colorscheme then
   end
 end
 
+
+-- use system clipboard 
+-- requires wl-clipboard on wayland
+vim.opt.clipboard = "unnamedplus"
+
+
+-- init leap.nvim
 require('leap').create_default_mappings()
 
 require("astronvim.utils").conditional_func(astronvim.user_opts("polish", nil, false), true)

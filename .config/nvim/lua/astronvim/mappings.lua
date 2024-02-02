@@ -19,6 +19,9 @@ local sections = {
   t = { desc = get_icon("Terminal", 1, true) .. "Terminal" },
 }
 
+-- Exit from insert mode by Esc in Terminal
+vim.keymap.set('t', '<esc>', [[<C-\><C-n>]])
+
 -- Projects --
 maps.n["<leader>Pm"] = { function() require('telescope').extensions.projects.projects{}end, desc = "Projectmanager"}
 
