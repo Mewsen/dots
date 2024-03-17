@@ -9,7 +9,7 @@ return {
     opts = {
       history = true,
       delete_check_events = "TextChanged",
-      region_check_events = "CursorMoved",
+      region_check_events = "InsertEnter",
     },
     config = require "plugins.configs.luasnip",
   },
