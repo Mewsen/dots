@@ -13,9 +13,9 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term alacritty
+set $term kitty
 #set $menu bemenu-run
-set $menu bemenu-run --binding vim -i -l 20 --fb "#1e1e2e" --ff "#94e2d5" --nb "#1e1e2e" --nf "#f5e0dc" --tb "#1e1e2e" --hb "#1e1e2e" --tf "#cba6f7" --hf "#89b4fa" --nf "#f5e0dc" --af "#f5e0dc" --ab "#1e1e2e" | xargs swaymsg exec --
+set $menu bemenu-run --binding vim -i -l 20 --fb "#111111" --ff "#ffffff" --nb "#111111" --nf "#111111" --tb "#FFFFFF" --hb "#FFFFFF" --tf "#111111" --hf "#000000" --nf "#f5e0dc" --af "#f5e0dc" --ab "#111111" | xargs swaymsg exec --
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
@@ -44,7 +44,7 @@ input "type:touchpad" {
 }
 
 
-output * bg $HOME/Pictures/Wallpapers/wallpaper.png fill
+output * bg $HOME/Personal/Pictures/wallpaper.png fill
 
 
 # Example configuration:
@@ -58,9 +58,9 @@ output HDMI-A-1 resolution 3840x2160 position 0,1
 exec mako --config $HOME/.config/mako/config
  
  exec swayidle -w \
-          timeout 500 'swaylock -f -c 000000' \
+          timeout 500 'swaylock -f -c 111111' \
           timeout 1000 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-          before-sleep 'swaylock -f -c 000000'
+          before-sleep 'swaylock -f -c 111111'
 
 ### Key bindings
 #
@@ -196,16 +196,16 @@ exec mako --config $HOME/.config/mako/config
 
     bindsym $mod+minus scratchpad show
 
-gaps inner 10
-gaps outer 20
+#gaps inner 10
+#gaps outer 20
 
 default_border pixel 5
 
-client.focused          #FFFFFF #000000 #FFFFFF #DDB6F2 #DDB6F2
-client.focused_inactive #C9CBFF #C9CBFF #C9CBFF #C9CBFF #C9CBFF
-client.unfocused        #C9CBFF #C9CBFF #C9CBFF #C9CBFF #C9CBFF
+client.focused          #FFFFFF #111111 #FFFFFF #FFFFFF #FFFFFF
+client.focused_inactive #AAAAAA #AAAAAA #AAAAAA #AAAAAA #AAAAAA
+client.unfocused        #AAAAAA #AAAAAA #AAAAAA #AAAAAA #AAAAAA
 client.urgent           #2F343A #900000 #FFFFFF #900000   #900000
-client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
+client.placeholder      #111111 #0C0C0C #FFFFFF #111111   #0C0C0C
 
 client.background       #FFFFFF
 
