@@ -19,7 +19,7 @@
     "height": 20,
 
     "modules-left": [
-        "sway/workspaces",
+        "hyprland/workspaces",
         "sway/mode",
         "sway/window"
     ],
@@ -131,7 +131,7 @@
         "max-length": 60
     },
 
-    "sway/workspaces": {
+    "hyprland/workspaces": {
         "all-outputs": false,
         "disable-scroll": true,
         "format": "{icon} {name}",

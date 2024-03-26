@@ -1,0 +1,56 @@
+- name: configure arch 
+  hosts: localhost
+  tasks:
+    - name: update
+      community.general.pacman:
+        update_cache: yes
+        upgrade: yes
+    - name: base
+      community.general.pacman:
+        update_cache: yes
+        name:
+          - git
+          - base-devel
+          - neovim
+          - code
+          - yadm
+          - zsh
+          - btop
+          - ttf-firacode-nerd
+          - noto-fonts
+          - noto-fonts-cjk
+          - noto-fonts-emoji
+          - noto-fonts-extra
+          - go
+          - mpv
+          - docker
+          - ffmpeg
+    - name: desktop 
+      community.general.pacman:
+        update_cache: yes
+        name:
+          - hyprland
+          - kitty
+          - bemenu-wayland
+          - bemenu
+          - grim
+          - brightnessctl
+          - polkit
+          - polkit-gnome
+          - slurp
+          - waybar
+          - networkmanager
+          - network-manager-applet
+          - mako
+          - hyprpaper
+          - hyprlock
+          - xdg-desktop-portal
+          - xdg-desktop-portal-hyprland
+          - xwaylandvideobridge
+          - firefox
+    - name: laptop
+      community.general.pacman:
+        update_cache: yes
+        name:
+          - tlp
+          - powertop
