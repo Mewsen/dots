@@ -61,6 +61,11 @@ return {
         "jay-babu/mason-null-ls.nvim",
         cmd = { "NullLsInstall", "NullLsUninstall" },
         opts = { handlers = {} },
+        config = function()
+          local capabilities = vim.lsp.protocol.make_client_capabilities()
+          capabilities.offsetEncoding = { "utf-16" }
+          require("lspconfig").clangd.setup({ capabilities = capabilities })
+        end
       },
     },
     event = "User AstroFile",

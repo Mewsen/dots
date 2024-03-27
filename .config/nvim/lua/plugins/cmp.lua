@@ -8,8 +8,8 @@ return {
     dependencies = { "rafamadriz/friendly-snippets" },
     opts = {
       history = true,
-      delete_check_events = "TextChanged",
-      region_check_events = "InsertEnter",
+      delete_check_events = "TextChanged,InsertEnter",
+      region_check_events = "CursorHold,InsertLeave",
     },
     config = require "plugins.configs.luasnip",
   },
