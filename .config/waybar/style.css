@@ -51,8 +51,7 @@
     background: #11111b;
     color: #cdd6f4;
     font-family: Cantarell, Noto Sans, sans-serif;
-/*    font-size: 13px;*/
-    font-size: 22px;
+    font-size: 1rem;
 }
 
 /* Each module */
@@ -68,8 +67,8 @@
 #tray {
 /*    padding-left: 10px;
     padding-right: 10px;*/
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
 
@@ -135,9 +134,9 @@
 
 #mode {
     background: #9399b2;
-    border-top: 2px solid white;
+    border-top: 0.1rem solid white;
     /* To compensate for the top border and still have vertical centering */
-    padding-bottom: 2px;
+    padding-bottom: 0.1rem;
 }
 
 #network {
@@ -177,19 +176,19 @@
 }
 
 #workspaces button.active {
-    border-top: 2px solid transparent;
-    padding-bottom: 2px;
-    padding-left: 10px;
-    padding-right: 10px;
+    border-top: 0.1rem solid transparent;
+    padding-bottom: 0.1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     color: #cdd6f4;
 }
 
 #workspaces button {
-    border-top: 2px solid transparent;
+    border-top: 0.1rem solid transparent;
     /* To compensate for the top border and still have vertical centering */
-    padding-bottom: 2px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-bottom: 0.1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     color: #bac2de;
 }
 

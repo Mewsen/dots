@@ -29,6 +29,7 @@
         "pulseaudio",
         "memory",
         "cpu",
+        "battery",
         "custom/keyboard-layout",
         "tray",
         "clock"
