@@ -1,5 +1,6 @@
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/workspace/go/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH="$HOME/workspace/go"
 export QT_QPA_PLATFORM=wayland
 export EDITOR='nvim'
@@ -7,6 +8,8 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 
 plugins=(git nvm zsh-autosuggestions vi-mode)
+
+alias code='codium --password-store="gnome-libsecret"'
 
 source $ZSH/oh-my-zsh.sh
 export LANG=en_US.UTF-8
