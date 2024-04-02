@@ -11,12 +11,11 @@
     // Global configuration
     // -------------------------------------------------------------------------
 
-    "layer": "bottom",
+    "layer": "top",
 
     "position": "top",
 
     // If height property would be not present, it'd be calculated dynamically
-    "height": 20,
 
     "modules-left": [
         "hyprland/workspaces",
@@ -63,7 +62,6 @@
     "clock": {
         "interval": 1,
         "format": "{:%A, %d %B %Y %H:%M:%S}  ",
-        "format-alt": " {:%H:%M} ",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
             "mode"          : "year",
@@ -107,7 +105,7 @@
 
     "memory": {
         "interval": 5,
-        "format": "  {}%", // Icon: memory
+        "format": "MEM: {}%", // Icon: memory
         "states": {
             "warning": 70,
             "critical": 90
@@ -115,9 +113,9 @@
     },
 
     "network": {
-        "interval": 5,
-        "format-wifi": "  {essid} ({signalStrength}%)", // Icon: wifi
-        "format-ethernet": "  {ifname}: {ipaddr}/{cidr}", // Icon: ethernet
+        "interval": 10,
+        "format-wifi": "{essid} ({signalStrength}%)", // Icon: wifi
+        "format-ethernet": "{ifname}: {ipaddr}/{cidr}", // Icon: ethernet
         "format-disconnected": "⚠  Disconnected",
         "tooltip-format": "{ifname}: {ipaddr}"
     },
@@ -150,8 +148,8 @@
 
     "pulseaudio": {
         //"scroll-step": 1,
-        "format": "{icon}  {volume}%",
-        "format-bluetooth": "{icon}  {volume}%",
+        "format": "Vol: {volume}%",
+        "format-bluetooth": "Vol: {volume}%",
         "format-muted": "",
         "format-icons": {
             "headphones": "",
@@ -181,7 +179,7 @@
 
     "tray": {
         "icon-size": 21,
-        "spacing": 10
+        "spacing": 5
     }
 
 }
