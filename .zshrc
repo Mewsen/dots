@@ -20,5 +20,4 @@ else
 fi
 
 source $ZSH/oh-my-zsh.sh
-source /usr/share/nvm/init-nvm.sh
 pfetch
