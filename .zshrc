@@ -10,7 +10,7 @@ ZSH_THEME="robbyrussell"
 
 plugins=(git nvm sudo vi-mode zsh-autosuggestions)
 
-alias code='codium --password-store="gnome-libsecret"'
+alias code='codium --password-store="gnome-libsecret" && exit'
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
