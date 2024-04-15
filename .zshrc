@@ -10,8 +10,6 @@ ZSH_THEME="robbyrussell"
 
 plugins=(git nvm sudo vi-mode zsh-autosuggestions)
 
-alias code='codium -n --password-store="gnome-libsecret" $2'
-
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
