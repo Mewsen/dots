@@ -29,6 +29,7 @@
       community.general.pacman:
         update_cache: yes
         name:
+          - xdg-user-dirs
           - hyprland
           - kitty
           - bemenu-wayland
