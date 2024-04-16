@@ -8,6 +8,9 @@ export ZSH="$HOME/.oh-my-zsh"
 export EDITOR='nvim'
 ZSH_THEME="robbyrussell"
 
+# Set this for ssh connections to work when using alacritty
+export TERM=xterm-256color
+
 plugins=(git nvm sudo vi-mode zsh-autosuggestions)
 
 # Preferred editor for local and remote sessions
