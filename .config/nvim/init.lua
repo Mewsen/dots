@@ -211,6 +211,27 @@ else
       build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
     },
 
+    {
+      'romgrk/barbar.nvim',
+      dependencies = {
+        'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+        'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+      },
+      init = function()
+        vim.g.barbar_auto_setup = false
+      end,
+      opts = {
+        -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+        -- animation = true,
+        -- insert_at_start = true,
+        -- …etc.
+      },
+      keys = {
+        { 'H', '<Cmd>BufferPrevious<CR>', desc = 'previous tab' },
+        { 'L', '<Cmd>BufferNext<CR>', desc = 'next tab' },
+      },
+      version = '^1.0.0', -- optional: only update when a new 1.x version is released
+    },
     -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
     --
     -- This is often very useful to both group configuration, as well as handle
@@ -225,7 +246,6 @@ else
     -- Then, because we use the `config` key, the configuration only runs
     -- after the plugin has been loaded:
     --  config = function() ... end
-
     { -- Useful plugin to show you pending keybinds.
       'folke/which-key.nvim',
       event = 'VimEnter', -- Sets the loading event to 'VimEnter'
