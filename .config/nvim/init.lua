@@ -56,6 +56,9 @@ else
   vim.opt.timeoutlen = 300
 
   vim.opt.tabstop = 4
+  vim.opt.expandtab = true
+  vim.opt.shiftwidth = 4
+  vim.opt.smarttab = true
 
   -- Configure how new splits should be opened
   vim.opt.splitright = true
