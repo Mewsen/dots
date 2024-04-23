@@ -34,11 +34,6 @@ yellow = "0xFAE3B0"
 background = "0x1E1D2F"
 foreground = "0xD9E0EE"
 
-[env]
-LANG = "en_US.UTF-8"
-LC_CTYPE = "en_US.UTF-8"
-TERM = "alacritty"
-
 [font]
 size = 17
 
