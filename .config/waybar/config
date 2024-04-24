@@ -47,7 +47,7 @@
             "critical": 15
         },
         // Connected to AC
-        "format": "  {icon}  {capacity}%", // Icon: bolt
+        "format": "  {icon}   {capacity}%", // Icon: bolt
         // Not connected to AC
         "format-discharging": "{icon}   {capacity}%",
         "format-icons": [
@@ -62,7 +62,7 @@
 
     "clock": {
         "interval": 1,
-        "format": "{:%A, %d %B %Y %H:%M:%S}  ",
+        "format": "{:%A, %d %B %Y %H:%M:%S}",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
             "mode"          : "year",
@@ -89,7 +89,7 @@
 
     "cpu": {
         "interval": 5,
-        "format": "  {usage}% ({load})", // Icon: microchip
+        "format": "   {usage}%", // Icon: microchip
         "states": {
           "warning": 70,
           "critical": 90
@@ -134,16 +134,11 @@
     "hyprland/workspaces": {
         "all-outputs": false,
         "disable-scroll": true,
-        "format": "{icon} {name}",
+        "format": "{icon}  {name}",
         "format-icons": {
-            "1:www": "龜", // Icon: firefox-browser
-            "2:mail": "", // Icon: mail
-            "3:editor": "", // Icon: code
-            "4:terminals": "", // Icon: terminal
-            "5:portal": "", // Icon: terminal
             "urgent": "",
             "focused": "",
-            "default": ""
+            "default": " "
         }
     },
 
