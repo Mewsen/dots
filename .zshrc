@@ -1,11 +1,13 @@
 export LANG=en_US.UTF-8
-export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export GOPATH="$HOME/workspace/go"
 export GOBIN="$GOPATH/bin/"
 export PATH="$HOME/workspace/go/bin:$PATH"
 export ZSH="$HOME/.oh-my-zsh"
 export EDITOR='nvim'
+export CARGO_HOME="$HOME/workspace/cargo"
+export RUSTUP_HOME="$HOME/workspace/rustup"
+export PATH="$HOME/workspace/cargo/bin:$PATH"
 ZSH_THEME="robbyrussell"
 
 # Set this for ssh connections to work when using alacritty
