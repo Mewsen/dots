@@ -5,13 +5,14 @@ set $down j
 set $up k
 set $right l
 
-set $term kitty
+set $term alacritty 
 
 set $menu bemenu-run --binding vim -i -l 20 --fb "#111111" --ff "#ffffff" --nb "#111111" --nf "#111111" --tb "#FFFFFF" --hb "#FFFFFF" --tf "#111111" --hf "#000000" --nf "#f5e0dc" --af "#f5e0dc" --ab "#111111" | xargs swaymsg exec --
 
-exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-
 exec --no-startup-id nm-applet --indicator
+exec --no-startup-id xembedsniproxy
+exec systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP
+exec dbus-update-activation-environment WAYLAND_DISPLAY
 
 input "type:keyboard" {
     xkb_layout us,de
@@ -33,7 +34,8 @@ input "type:touchpad" {
 
 output * bg $PERSONAL/Pictures/wallpaper.png fill
 
-output HDMI-A-1 resolution 3840x2160 position 0,1
+output eDP-1 resolution 2256x1504 position 0,0 scale 1
+output DP-2 scale 1.5
 
 exec mako --config $HOME/.config/mako/config
 
@@ -99,10 +101,11 @@ bindsym $mod+Shift+0 move container to workspace number 10
 
 bindsym XF86MonBrightnessUp exec "brightnessctl s 10%+"
 bindsym XF86MonBrightnessDown exec "brightnessctl s 10%-"
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +3%
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -3%
-bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-
+#bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
 
 bindsym $mod+b splith
 bindsym $mod+v splitv
@@ -150,4 +153,4 @@ mode "resize" {
 
 exec waybar -c ~/.config/waybar/config -s ~/.config/waybar/style.css
 
-include /etc/sway/config.d/*
+exec initsway

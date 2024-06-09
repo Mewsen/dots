@@ -63,4 +63,3 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 #
-source $XDG_CONFIG_HOME/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh

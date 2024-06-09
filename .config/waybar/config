@@ -1,28 +1,14 @@
-// =============================================================================
-//
-// Waybar configuration
-//
-// Configuration reference: https://github.com/Alexays/Waybar/wiki/Configuration
-//
-// =============================================================================
-
 {
-    // -------------------------------------------------------------------------
-    // Global configuration
-    // -------------------------------------------------------------------------
-
     "layer": "top",
-
     "position": "top",
-
-    // If height property would be not present, it'd be calculated dynamically
-
+    "margin": "10 15 0 15",
+    "reload_style_on_change": true,
     "modules-left": [
-        "hyprland/workspaces",
-        "hyprland/mode"
+        "sway/workspaces",
+        "sway/mode"
     ],
     "modules-center": [
-        "hyprland/window"
+        "sway/window"
     ],
     "modules-right": [
         "network",
@@ -35,20 +21,12 @@
         "clock"
     ],
 
-
-    // -------------------------------------------------------------------------
-    // Modules
-    // -------------------------------------------------------------------------
-
     "battery": {
-        "interval": 10,
+        "interval": 30,
         "states": {
-            "warning": 30,
-            "critical": 15
+            "low": 30
         },
-        // Connected to AC
         "format": "  {icon}   {capacity}%", // Icon: bolt
-        // Not connected to AC
         "format-discharging": "{icon}   {capacity}%",
         "format-icons": [
             "", // Icon: battery-full
@@ -89,7 +67,7 @@
 
     "cpu": {
         "interval": 5,
-        "format": "   {usage}%", // Icon: microchip
+        "format": "CPU {usage}%", // Icon: microchip
         "states": {
           "warning": 70,
           "critical": 90
@@ -97,7 +75,7 @@
     },
 
     "custom/keyboard-layout": {
-      "exec": "hyprctl devices -j | jq -r '.keyboards[] | .active_keymap' | head -n5 | cut -c1-7 | tail -1",
+      "exec": "swaymsg -t get_inputs | grep -m1 'xkb_active_layout_name' | cut -d '\"' -f4",
       "interval": 1,
       "format": "   {}", // Icon: keyboard
       "signal": 1, // SIGHUP
@@ -117,33 +95,33 @@
         "interval": 10,
         "format-wifi": "{essid} ({signalStrength}%)", // Icon: wifi
         "format-ethernet": "{ifname}: {ipaddr}/{cidr}", // Icon: ethernet
-        "format-disconnected": "⚠  Disconnected",
+        "format-disconnected": "Disconnected",
         "tooltip-format": "{ifname}: {ipaddr}"
     },
 
-    "hyprland/mode": {
-        "format": "<span style=\"italic\">  {}</span>", // Icon: expand-arrows-alt
+    "sway/mode": {
+        "format": "{}", // Icon: expand-arrows-alt
         "tooltip": false
     },
 
-    "hyprland/window": {
+    "sway/window": {
         "format": "{}",
-        "max-length": 120
+        "max-length": 64
     },
 
-    "hyprland/workspaces": {
+    "sway/workspaces": {
         "all-outputs": false,
         "disable-scroll": true,
         "format": "{icon}  {name}",
         "format-icons": {
-            "urgent": "",
-            "focused": "",
-            "default": " "
+            "urgent": "!",
+            "focused": "X",
+            "default": "O"
         }
     },
 
     "pulseaudio": {
-        //"scroll-step": 1,
+        "scroll-step": 1,
         "format": "Vol: {volume}%",
         "format-bluetooth": "Vol: {volume}%",
         "format-muted": "",
@@ -174,7 +152,7 @@
     },
 
     "tray": {
-        "icon-size": 21,
+        "icon-size": 18,
         "spacing": 5
     }
 

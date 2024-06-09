@@ -35,12 +35,8 @@ background = "0x1E1D2F"
 foreground = "0xD9E0EE"
 
 [font]
-size = 13
+size = 14.0
 
 [font.normal]
 family = "Fira Code NerdFont"
 style = "Regular"
-
-[window]
-opacity = 0.7
-blur = true
