@@ -34,7 +34,11 @@
 	enable = true;
 	driSupport = true;
 	driSupport32Bit = true;
-	extraPackages = with pkgs; [ mesa libva amdvlk];
+	extraPackages = with pkgs; [ 
+	    mesa
+	    libva
+	    amdvlk
+	];
 	extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
     };
 
@@ -92,7 +96,8 @@
 	obsidian
 	vscode
 	halloy
-	davinci-resolve
+	wl-color-picker
+	kdePackages.kdenlive
     	#For xembedsniproxy which embeds xtrays for wayland systemtray 
     	libsForQt5.plasma-workspace
 	(
@@ -109,6 +114,7 @@
 
     ];
 
+    services.desktopManager.plasma6.enable = true;
     programs.firefox.enable = true;
     programs.sway.enable = true;
     programs.waybar.enable = true;
