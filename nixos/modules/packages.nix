@@ -17,6 +17,7 @@ with pkgs; [
 	zsh-autosuggestions
 
 	# Utilities
+	hugo
 	wget
 	lf
 	amdgpu_top

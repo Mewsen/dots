@@ -30,6 +30,7 @@
 
     services.xserver.videoDrivers = [ "modesettings" ];
 
+
     hardware.opengl = {
 	enable = true;
 	driSupport = true;
@@ -94,8 +95,11 @@
 	gnome.nautilus
 	gnome.adwaita-icon-theme
 	obsidian
-	vscode
+	unstable.vscode
 	halloy
+	obs-studio
+	unstable.yt-dlp
+	mpv
 	wl-color-picker
 	kdePackages.kdenlive
     	#For xembedsniproxy which embeds xtrays for wayland systemtray 
