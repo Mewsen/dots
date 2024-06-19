@@ -27,6 +27,8 @@ with pkgs; [
 	zip
 	yadm
 	btop
+	#nix fmt
+	alejandra
 	glxinfo
 	lm_sensors
 	vulkan-tools

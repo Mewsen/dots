@@ -84,7 +84,6 @@
 	wl-clipboard
 	mako
 	pavucontrol
-	#firefox-bin
 	(pkgs.wrapFirefox (pkgs.firefox-unwrapped.override { pipewireSupport = true;}) {})
 	libreoffice
 	signal-desktop
@@ -101,7 +100,7 @@
 	unstable.yt-dlp
 	mpv
 	wl-color-picker
-	kdePackages.kdenlive
+	lazygit
     	#For xembedsniproxy which embeds xtrays for wayland systemtray 
     	libsForQt5.plasma-workspace
 	(
@@ -118,7 +117,6 @@
 
     ];
 
-    services.desktopManager.plasma6.enable = true;
     programs.firefox.enable = true;
     programs.sway.enable = true;
     programs.waybar.enable = true;
