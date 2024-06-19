@@ -1,33 +1,34 @@
-{config, pkgs, ...}:
-
 {
-    environment.sessionVariables = rec {
-	XDG_CONFIG_HOME="$HOME/.config";
-	XDG_DATA_HOME="$HOME/.local/share";
-	XDG_CACHE_HOME="$HOME/.cache";
-	WORKSPACE="$HOME/Workspace";
-	PERSONAL="$HOME/Personal";
+  config,
+  pkgs,
+  ...
+}: {
+  environment.sessionVariables = rec {
+    XDG_CONFIG_HOME = "$HOME/.config";
+    XDG_DATA_HOME = "$HOME/.local/share";
+    XDG_CACHE_HOME = "$HOME/.cache";
+    WORKSPACE = "$HOME/Workspace";
+    PERSONAL = "$HOME/Personal";
 
-	DOCKER_HOST="unix://$XDG_RUNTIME_DIR/docker.sock";
+    DOCKER_HOST = "unix://$XDG_RUNTIME_DIR/docker.sock";
 
-	CARGO_HOME="${WORKSPACE}/cargo";
-	RUSTUP_HOME="${WORKSPACE}/rustup";
+    CARGO_HOME = "${WORKSPACE}/cargo";
+    RUSTUP_HOME = "${WORKSPACE}/rustup";
 
-	GOPATH="${WORKSPACE}/go";
-	GOBIN="${GOPATH}/bin/";
+    GOPATH = "${WORKSPACE}/go";
+    GOBIN = "${GOPATH}/bin/";
 
-	ZDOTDIR="${XDG_CONFIG_HOME}/zsh";
+    ZDOTDIR = "${XDG_CONFIG_HOME}/zsh";
 
-	LANG="en_US.UTF-8";
-	EDITOR="nvim";
+    LANG = "en_US.UTF-8";
+    EDITOR = "nvim";
 
-	TERM="xterm-256color";
+    TERM = "xterm-256color";
 
-	PATH = [
-	    "${WORKSPACE}/go/bin"
-	    "${WORKSPACE}/cargo/bin"
-	    "$HOME/.local/bin"
-	];
-    };
+    PATH = [
+      "${WORKSPACE}/go/bin"
+      "${WORKSPACE}/cargo/bin"
+      "$HOME/.local/bin"
+    ];
+  };
 }
-
