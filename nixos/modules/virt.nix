@@ -1,6 +1,10 @@
 {pkgs, ...}: {
   virtualisation.libvirtd.enable = true;
   virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
   virtualisation.virtualbox.host.enable = true;
   virtualisation.virtualbox.host.enableKvm = true;
   virtualisation.virtualbox.host.enableExtensionPack = true;
