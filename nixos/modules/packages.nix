@@ -11,7 +11,7 @@ with pkgs; [
   gh
   git
   nodejs
-  go
+  unstable.go
   zsh
   zsh-autosuggestions
 

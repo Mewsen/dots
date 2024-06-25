@@ -97,6 +97,7 @@
     obsidian
     unstable.vscode
     halloy
+    zed-editor
     obs-studio
     unstable.yt-dlp
     mpv
@@ -139,22 +140,17 @@
             || ( alejandra . ; echo "formatting failed!" && exit 1)
 
 
-          read -r -p "nixos-rebuild? [y/N] " response
-          response=$${response,,}    # tolower
-          if [[ "$response" =~ ^(yes|y)$ ]]
-          then
-            # Rebuild, output simplified errors, log trackebacks
-            sudo nixos-rebuild --flake ~/nixos#default --use-remote-sudo switch &>nixos-switch.log || (cat nixos-switch.log | grep --color error && exit 1)
+          read -r -p "nixos-rebuild? [y/N] "
+          if [[ ! $REPLY =~ ^[Yy]$ ]]
+            then
+              popd
+              exit 0
+              fi
+
+            nixos-rebuild --flake ~/nixos#default --use-remote-sudo switch
 
             # Back to where you were
             popd
-
-            # Notify all OK!
-            notify-send -e "NixOS Rebuilt OK!" --icon=software-update-available
-          else
-          # Back to where you were
-          popd
-          fi
         '';
       }
     )
