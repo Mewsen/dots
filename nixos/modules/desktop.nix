@@ -93,12 +93,16 @@
     libva-utils
     vesktop
     gnome.nautilus
+    gnome.gnome-disk-utility
     gnome.adwaita-icon-theme
+    qbittorrent
     obsidian
     unstable.vscode
     halloy
+    ventoy-full
     zed-editor
     obs-studio
+    jetbrains.idea-community
     unstable.yt-dlp
     mpv
     wl-color-picker
@@ -159,6 +163,10 @@
   programs.firefox.enable = true;
   programs.sway.enable = true;
   programs.waybar.enable = true;
+  programs.java = {
+    enable = true;
+    package = pkgs.jdk17;
+  };
   services.dbus.enable = true;
 
   xdg = {

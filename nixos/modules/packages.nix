@@ -11,11 +11,26 @@ with pkgs; [
   gh
   git
   nodejs
-  unstable.go
   zsh
   zsh-autosuggestions
+  gnumake
+  python3
+  libclang
+  jdt-language-server
+  lua-language-server
+  # Go
+  unstable.go
+  iferr
+  impl
+  golines
+  #nix fmt
+  alejandra
+  #nix lsp
+  nil
 
   # Utilities
+  ripgrep
+  texliveFull
   hugo
   wget
   lf
@@ -26,8 +41,6 @@ with pkgs; [
   zip
   yadm
   btop
-  #nix fmt
-  alejandra
   glxinfo
   lm_sensors
   vulkan-tools
