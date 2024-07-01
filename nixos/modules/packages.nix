@@ -15,7 +15,6 @@ with pkgs; [
   zsh-autosuggestions
   gnumake
   python3
-  libclang
   jdt-language-server
   lua-language-server
   # Go

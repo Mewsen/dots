@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{...}: {
   networking.hostName = "fw";
 
   networking.networkmanager.enable = true;

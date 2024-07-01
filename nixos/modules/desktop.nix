@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   services.logind = {
     lidSwitch = "suspend-then-hibernate";
     lidSwitchExternalPower = "ignore";
@@ -20,15 +16,6 @@
 
   #Provides an interface to sensors like Accelerometers and Light sensors.
   hardware.sensor.iio.enable = true;
-
-  #bluetooth
-  hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
-  hardware.bluetooth.settings = {
-    General = {
-      Enable = "Source,Sink,Media,Socket";
-    };
-  };
 
   services.xserver.videoDrivers = ["modesettings"];
 

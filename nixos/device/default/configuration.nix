@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  inputs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./hardware-configuration.nix
     ../../modules/audio.nix
@@ -16,23 +11,10 @@
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_6_9;
-
-  hardware.enableAllFirmware = true;
-
-  boot.initrd.luks.devices."luks-9e0fd976-102e-4697-95cc-903e91a49672".device = "/dev/disk/by-uuid/9e0fd976-102e-4697-95cc-903e91a49672";
-
   # automount usb
   services.devmon.enable = true;
+  services.gvfs.enable = true;
   services.udisks2.enable = true;
-
-  services.upower.enable = true;
-  services.power-profiles-daemon.enable = true;
-
-  services.fwupd.enable = true;
-  hardware.framework.amd-7040.preventWakeOnAC = true;
 
   time.timeZone = "Europe/Berlin";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -54,8 +36,6 @@
     description = "michael";
     shell = pkgs.zsh;
     extraGroups = ["networkmanager" "wheel" "docker"];
-    packages = with pkgs; [
-    ];
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -70,5 +50,5 @@
     autosuggestions.enable = true;
   };
 
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "24.05";
 }

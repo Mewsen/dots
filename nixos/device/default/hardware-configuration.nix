@@ -4,13 +4,27 @@
 {
   config,
   lib,
-  pkgs,
   modulesPath,
+  pkgs,
   ...
 }: {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  hardware.enableAllFirmware = true;
+
+  services.upower.enable = true;
+  services.power-profiles-daemon.enable = true;
+
+  services.fwupd.enable = true;
+  hardware.framework.amd-7040.preventWakeOnAC = true;
+
+  boot.initrd.luks.devices."luks-9e0fd976-102e-4697-95cc-903e91a49672".device = "/dev/disk/by-uuid/9e0fd976-102e-4697-95cc-903e91a49672";
 
   boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "thunderbolt" "usb_storage" "sd_mod"];
   boot.initrd.kernelModules = [];
