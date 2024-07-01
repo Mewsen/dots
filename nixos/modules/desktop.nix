@@ -2,11 +2,7 @@
   services.logind = {
     lidSwitch = "suspend-then-hibernate";
     lidSwitchExternalPower = "ignore";
-    extraConfig = ''
-      HandlePowerKey=suspend-then-hibernate
-      IdleAction=suspend-then-hibernate
-      IdleActionSec=2m
-    '';
+    powerKey = "suspend";
   };
 
   systemd.sleep.extraConfig = "HibernateDelaySec=1h";
