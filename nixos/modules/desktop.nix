@@ -112,21 +112,14 @@
         text = ''
 
           #!/usr/bin/env bash
-          #
-          # A rebuild script that commits on a successful build
           set -e
 
-          # Edit your config
           $EDITOR $HOME/nixos/
 
-          # cd to your config dir
           pushd ~/nixos/
 
-          # Autoformat your nix files
           alejandra . &>/dev/null \
             || ( alejandra . ; echo "formatting failed!" && exit 1)
-
-
           read -r -p "nixos-rebuild? [y/N] "
           if [[ ! $REPLY =~ ^[Yy]$ ]]
             then
@@ -136,7 +129,6 @@
 
             nixos-rebuild --flake ~/nixos#default --use-remote-sudo switch
 
-            # Back to where you were
             popd
         '';
       }

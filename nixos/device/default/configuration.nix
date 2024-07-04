@@ -7,6 +7,7 @@
     ../../modules/desktop.nix
     ../../modules/gaming.nix
     ../../modules/env.nix
+    ../../modules/bluetooth.nix
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];

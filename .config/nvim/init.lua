@@ -285,6 +285,26 @@ else
     --
     -- Use the `dependencies` key to specify the dependencies of a particular plugin
 
+    {
+      "epwalsh/obsidian.nvim",
+      version = "*",
+      lazy = false,
+      dependencies = {
+        -- Required.
+        "nvim-lua/plenary.nvim",
+        -- see below for full list of optional dependencies 👇
+      },
+      opts = {
+        workspaces = {
+          {
+            name = "personal",
+            path = "$PERSONAL/Documents/Vault",
+          },
+        },
+
+        -- see below for full list of options 👇
+      },
+    },
     { -- Fuzzy Finder (files, lsp, etc)
       'nvim-telescope/telescope.nvim',
       event = 'VimEnter',
@@ -526,6 +546,7 @@ else
         require 'lspconfig'.jdtls.setup {}
         require 'lspconfig'.pyright.setup {}
         require 'lspconfig'.nil_ls.setup {}
+        require 'lspconfig'.marksman.setup {}
       end,
     },
 
@@ -731,7 +752,7 @@ else
       'nvim-treesitter/nvim-treesitter',
       build = ':TSUpdate',
       opts = {
-        ensure_installed = { 'bash', 'go', 'rust', 'javascript', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+        ensure_installed = { 'bash', 'go', 'javascript', 'lua', 'luadoc' },
         -- Autoinstall languages that are not installed
         auto_install = true,
         highlight = {

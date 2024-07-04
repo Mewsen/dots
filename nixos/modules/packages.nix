@@ -28,7 +28,10 @@ with pkgs; [
   nil
 
   # Utilities
+  markdownlint-cli
+  marksman
   ripgrep
+  ueberzugpp
   texliveFull
   hugo
   wget
