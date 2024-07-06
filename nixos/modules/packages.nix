@@ -27,7 +27,18 @@ with pkgs; [
   #nix lsp
   nil
 
+  cmake
+  llvmPackages_latest.lldb
+  clang-tools
+  llvmPackages_latest.clang
+  llvmPackages_latest.libcxx
+  unstable.SDL
+  unstable.SDL.dev
+  unstable.SDL2.dev
+  unstable.SDL2
+
   # Utilities
+  maven
   markdownlint-cli
   marksman
   ripgrep

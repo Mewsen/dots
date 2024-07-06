@@ -200,9 +200,6 @@ else
         vim.keymap.set('n', 's', function()
           require('leap').leap { target_windows = { vim.api.nvim_get_current_win() } }
         end)
-        vim.keymap.set('n', 'gs', '<Plug>(leap-from-window)') -- or S maybe
-        vim.keymap.set('n', '<leader>ss', '<Plug>(leap-forward)')
-        vim.keymap.set('n', '<leader>sS', '<Plug>(leap-backward)')
       end,
     },
 
@@ -255,34 +252,6 @@ else
           ['<leader>h'] = { 'Git [H]unk' },
         }, { mode = 'v' })
       end,
-    },
-
-    -- NOTE: Plugins can specify dependencies.
-    --
-    -- The dependencies are proper plugin specifications as well - anything
-    -- you do for a plugin at the top level, you can do for a dependency.
-    --
-    -- Use the `dependencies` key to specify the dependencies of a particular plugin
-
-    {
-      "epwalsh/obsidian.nvim",
-      version = "*",
-      lazy = false,
-      dependencies = {
-        -- Required.
-        "nvim-lua/plenary.nvim",
-        -- see below for full list of optional dependencies 👇
-      },
-      opts = {
-        workspaces = {
-          {
-            name = "personal",
-            path = "$PERSONAL/Documents/Vault",
-          },
-        },
-
-        -- see below for full list of options 👇
-      },
     },
     { -- Fuzzy Finder (files, lsp, etc)
       'nvim-telescope/telescope.nvim',
@@ -670,11 +639,21 @@ else
       end,
     },
 
-    {
-      'catppuccin/nvim',
-      priority = 1000,
+    { -- You can easily change to a different colorscheme.
+      -- Change the name of the colorscheme plugin below, and then
+      -- change the command in the config to whatever the name of that colorscheme is.
+      --
+      -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+      'folke/tokyonight.nvim',
+      priority = 1000, -- Make sure to load this before all the other start plugins.
       init = function()
-        vim.cmd.colorscheme 'catppuccin'
+        -- Load the colorscheme here.
+        -- Like many other themes, this one has different styles, and you could load
+        -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+        vim.cmd.colorscheme 'tokyonight-night'
+
+        -- You can configure highlights by doing something like:
+        vim.cmd.hi 'Comment gui=none'
       end,
     },
 
