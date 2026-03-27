@@ -1,0 +1,17 @@
+[Unit]
+Description=Waypipe Client (Wayland + vsock only)
+After=graphical-session.target
+PartOf=graphical-session.target
+ConditionPathExists=/dev/vsock
+ConditionEnvironment=WAYLAND_DISPLAY
+
+[Service]
+Type=simple
+ExecCondition=/bin/sh -c 'test -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"'
+ExecStart=/usr/bin/waypipe --no-gpu --vsock -s 554:1234 client
+Restart=on-failure
+RestartSec=5
+Environment=XDG_RUNTIME_DIR=%t
+
+[Install]
+WantedBy=graphical-session.target

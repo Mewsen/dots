@@ -1,0 +1,476 @@
+#!/usr/bin/env -S gawk -f
+# awk script for converting an iCal formatted file to a sequence of org-mode headings.
+# this may not work in general but seems to work for day and timed events from Google's
+# calendar, which is really all I need right now...
+#
+# usage:
+#   awk -f THISFILE < icalinputfile.ics > orgmodeentries.org
+#
+# Note: change org meta information generated below for author and
+# email entries!
+#
+# Caveats:
+#
+# - date entries with no time specified are assumed to be local time zone;
+#   same remark for date entries that do have a time but do not end with Z
+#   e.g.: 20130101T123456 is local and will be kept as 2013-01-01 12:34
+#   where 20130223T123422Z is UTC and will be corrected appropriately
+#
+# - UTC times are changed into local times, using the time zone of the
+#   computer that runs the script; it would be very hard in an awk script
+#   to respect the time zone of a file belonging to another time zone:
+#   the offsets will be different as well as the switchover time(s);
+#   (consider a remote shell to a computer with the file's time zone)
+#
+# - the UTC conversion entirely relies on the built-in strftime method;
+#   the author is not responsible for any erroneous conversions nor the
+#   consequence of such conversions
+#
+# - does process RRULE recurring events, but ignores COUNT specifiers
+#
+# - does not process EXDATE to exclude date(s) from recurring events
+#
+# Eric S Fraga
+# 20100629 - initial version
+# 20100708 - added end times to timed events
+#          - adjust times according to time zone information
+#          - fixed incorrect transfer for entries with ":" embedded within the text
+#          - added support for multi-line summary entries (which become headlines)
+# 20100709 - incorporated time zone identification
+#          - fixed processing of continuation lines as Google seems to
+#            have changed, in the last day, the number of spaces at
+#            the start of the line for each continuation...
+#          - remove backslashes used to protect commas in iCal text entries
+# no further revision log after this as the file was moved into a git
+# repository...
+#
+# Updated by: Guido Van Hoecke <guivhoATgmailDOTcom>
+# Last change: 2013.05.26 14:28:33
+#----------------------------------------------------------------------------------
+
+BEGIN {
+    ### config section
+
+    attending_types["UNSET"] = 0;
+    attending_types["ATTENDING"] = 1;
+    attending_types["NEEDS_ACTION"] = 2;
+    attending_types["NOT_ATTENDING"] = 3;
+    attending_types[0] = "UNSET";
+    attending_types[1] = "ATTENDING";
+    attending_types[2] = "NEEDS_ACTION";
+    attending_types[3] = "NOT_ATTENDING";
+
+    UIDS[0];
+    people_attending[0];
+
+    max_age = 7;
+    header = 1;
+    preamble = 1;
+    condense = 0;
+    original = 1;
+    trimdots = 1;
+
+    author = ENVIRON["AUTHOR"] != "" ? ENVIRON["AUTHOR"] : "Marc Sherry"
+    emailaddress = ENVIRON["EMAIL"] != "" ? ENVIRON["EMAIL"] : "unknown"
+    title = ENVIRON["TITLE"] != "" ? ENVIRON["TITLE"] : "Main Google calendar entries"
+    calendarname = ENVIRON["CALENDAR"] != "" ? ENVIRON["CALENDAR"] : "unknown"
+    filetags = ENVIRON["FILETAGS"] != "" ? ENVIRON["FILETAGS"] : "unknown"
+
+    "date +%z" | getline local_tz_offset
+    close("date +%z")
+    local_tz_offset = parse_timezone_offset(local_tz_offset)
+
+    ### end config section
+
+    FS = ":";
+    preserve = preamble || original
+    first = 1;
+    max_age_seconds = max_age*24*60*60
+
+    if (header) {
+        print "#+TITLE:      ", title
+        print "#+AUTHOR:     ", author
+        print "#+EMAIL:      ", emailaddress
+        print "#+DESCRIPTION: converted using the ical2org awk script"
+        print "#+CATEGORY:   ", calendarname
+        print "#+STARTUP:     hidestars"
+        print "#+STARTUP:     overview"
+        print "#+FILETAGS:   ", filetags
+        print ""
+    }
+}
+
+/^[ ]/ {
+    if (indescription) {
+        entry = entry gensub("\r", "", "g", gensub("^[ ]", "", 1, $0));
+    } else if (insummary) {
+        summary = summary gensub("\r", "", "g", gensub("^[ ]", "", 1, $0))
+    } else if (inattendee) {
+        attendee = attendee gensub("\r", "", "g", gensub("^[ ]", "", 1, $0))
+        are_we_going(attendee)
+        add_attendee(attendee)
+    } else if (inlocation) {
+        location = location unescape(gensub("\r", "", "g", $0), 0);
+    }
+    if (preserve)
+        icalentry = icalentry "\n" $0
+}
+
+/^BEGIN:VEVENT/ {
+    date = "";
+    entry = ""
+    headline = ""
+    icalentry = ""
+    id = ""
+    indescription = 0;
+    insummary = 0
+    inattendee = 0
+    inlocation = 0
+    in_alarm = 0
+    got_end_date = 0
+    attending = attending_types["UNSET"];
+    intfreq = ""
+    lasttimestamp = -1;
+    location = ""
+    rrend = ""
+    status = ""
+    summary = ""
+    attendee = ""
+    delete people_attending;
+
+    if (first) {
+        if(preamble) {
+            print "* COMMENT original iCal preamble"
+            print gensub("\r", "", "g", icalentry)
+        }
+        if (preserve)
+            icalentry = ""
+        first = 0;
+    }
+}
+
+/^BEGIN:VALARM/ {
+    in_alarm = 1
+}
+
+/^END:VALARM/ {
+    in_alarm = 0
+}
+
+/^[A-Z]/ {
+    if (preserve)
+        if (! index("DTSTAMP", $1))
+            icalentry = icalentry "\n" $0
+    indescription = 0;
+    insummary = 0;
+    inattendee = 0;
+}
+
+/^DTSTART;VALUE=DATE[^-]/ {
+    date = datestring($2);
+}
+
+/^DTEND;VALUE=DATE[^-]/ {
+    got_end_date = 1
+    end_date = datestring($2, 1);
+    if (issameday)
+        end_date = ""
+}
+
+/^DTSTART[:;][^V]/ {
+    tz = ""
+    if (match($0, /TZID=([^:;]+)/, a))
+        tz = a[1]
+
+    tz_offset = get_timezone_offset(tz)
+    offset = local_tz_offset - tz_offset
+    date = datetimestring($2, offset)
+
+    if (date != "" && got_end_date)
+        fix_date_time()
+}
+
+/^DTEND[:;][^V]/ {
+    tz = ""
+    if (match($0, /TZID=([^:;]+)/, a))
+        tz = a[1]
+
+    tz_offset = get_timezone_offset(tz)
+    offset = local_tz_offset - tz_offset
+
+    end_date = datetimestring($2, offset);
+    got_end_date = 1
+
+    if (date != "" && got_end_date)
+        fix_date_time()
+}
+
+/^DTSTART[:;]VALUE=DATE-TIME/ {
+    tz = "";
+    offset = local_tz_offset
+    date = datetimestring($2, offset);
+
+    if (date != "" && got_end_date)
+        fix_date_time()
+}
+
+/^DTEND[:;]VALUE=DATE-TIME/ {
+    tz = "";
+    offset = local_tz_offset
+    end_date = datetimestring($2, offset);
+    got_end_date = 1
+
+    if (date != "" && got_end_date)
+        fix_date_time()
+}
+
+/^RRULE:FREQ=(DAILY|WEEKLY|MONTHLY|YEARLY)/ {
+    freq = tolower(gensub(/.*FREQ=(.).*/, "\\1", 1, $0))
+    interval =  $2 ~ /INTERVAL=/ ? gensub(/.*INTERVAL=([0-9]+);.*/, "\\1", 1, $2) : 1
+    rrend = $2 ~ /UNTIL=/ ? datestring(gensub(/.*UNTIL=([0-9]{8}).*/, "\\1", 1, $2)) : ""
+    rrend_raw = $2 ~ /UNTIL=/ ? gensub(/.*UNTIL=([0-9]{8}).*/, "\\1", 1, $2) : ""
+    repeat_count = $2 ~ /COUNT=/ ? gensub(/.*COUNT=([0-9]+).*/, "\\1", 1, $2) : ""
+    intfreq =  " +" interval freq
+    if (intfreq == " +1d" && end_date == "" && rrend != "")
+        intfreq = ""
+    now = strftime("%Y%m%dT%H%M%SZ")
+    if (rrend_raw != "" && rrend_raw < now)
+        intfreq = ""
+    if (repeat_count != "")
+        intfreq = ""
+}
+
+/^DESCRIPTION/ {
+    if (!in_alarm) {
+        entry = entry gensub("\r", "", "g", gensub(/^DESCRIPTION:/, "", 1, $0));
+        indescription = 1;
+    }
+}
+
+/^SUMMARY/ {
+    if (!in_alarm) {
+       summary = gensub("\r", "", "g", gensub(/^SUMMARY:/, "", 1, $0));
+
+       if(trimdots && summary ~ /\.\.\.$/)
+           sub(/\.\.\.$/, "", summary)
+       insummary = 1;
+    }
+}
+
+/^UID/ {
+    if (!in_alarm)
+        id = gensub("\r", "", "g", $2);
+}
+
+/^LOCATION/ {
+    location = unescape(gensub("\r", "", "g", $2), 0);
+    inlocation = 1;
+}
+
+/^STATUS/ {
+    status = gensub("\r", "", "g", $2);
+}
+
+/^ATTENDEE/ {
+    attendee = gensub("\r", "", "g", $0);
+    inattendee = 1;
+}
+
+/^END:VEVENT/ {
+    is_duplicate = (id in UIDS);
+    if (is_duplicate == 0 && (max_age < 0 || intfreq != "" || (lasttimestamp > 0 && systime() < lasttimestamp + max_age_seconds))) {
+        if (attending != attending_types["NOT_ATTENDING"]) {
+            if (intfreq != "")
+                date = date intfreq
+            else if (end_date != "")
+                date = date ">--<" end_date
+            else if (rrend != "")
+                date = date ">--<" rrend
+
+            if (condense)
+                print "* <" date "> " gensub("^[ ]+", "", "", unescape(summary, 0))
+            else
+                print "* " gensub("^[ ]+", "", "g", unescape(summary, 0))
+            print "  :PROPERTIES:"
+            print "  :ID:        " id
+            if (length(location))
+                print "  :LOCATION:  " location
+            if (length(status))
+                print "  :STATUS:    " status
+            attending_string = attending_types[attending]
+            if (attending_string == "UNSET")
+                attending_string = "ATTENDING"
+            print "  :ATTENDING: " attending_string
+            print "  :ATTENDEES: " join_keys(people_attending)
+            print "  :END:"
+            if (date2 != "") {
+                print "  :LOGBOOK:"
+                print "  CLOCK: [" date1 "]--[" date2 "] =>  " "0:00"
+                print "  :END"
+            }
+            if (!condense)
+                 print "<" date ">"
+
+            print ""
+
+            if (length(entry) > 1)
+                print gensub("^[ ]+", "", "g", unescape(entry, 1));
+
+            if (original)
+                print "** COMMENT original iCal entry\n", gensub("\r", "", "g", icalentry)
+        }
+        UIDS[id] = 1;
+    }
+}
+
+function join_keys(input, joined, first_key, key)
+{
+    joined = ""
+    first_key = 1
+    for (key in input) {
+        if (first_key != 1)
+            joined = joined ", "
+        joined = joined key
+        first_key = 0
+    }
+    return joined
+}
+
+function unescape(input, preserve_newlines, ret)
+{
+    ret = gensub("\\\\,", ",", "g",
+                 gensub("\\\\;", ";", "g", input))
+    if (preserve_newlines)
+        ret = gensub("\\\\n", "\n", "g", ret)
+    else
+        ret = gensub("\\\\n", " ", "g", ret)
+    return ret
+}
+
+function parse_timezone_offset(offset_string, hours, minutes, total_offset) {
+    if (offset_string !~ /^[+-][0-9]{4}$/)
+        return 0
+
+    hours = substr(offset_string, 2, 2) * 60
+    minutes = substr(offset_string, 4, 2)
+    total_offset = hours + minutes
+
+    if (substr(offset_string, 1, 1) == "-")
+        total_offset = -total_offset
+
+    return total_offset
+}
+
+function is_safe_tz(tz) {
+    return (tz ~ /^([A-Za-z0-9._+-]+\/)*[A-Za-z0-9._+-]+$/ ||
+        tz ~ /^[+-][0-9]{4}$/)
+}
+
+function get_timezone_offset(tz, cmd, tz_offset, rc) {
+    if (tz == "")
+        return local_tz_offset
+
+    if (tz ~ /^[+-][0-9]{4}$/)
+        return parse_timezone_offset(tz)
+
+    if (!is_safe_tz(tz)) {
+        print "Warning: ignoring unsafe TZID: " tz > "/dev/stderr"
+        return local_tz_offset
+    }
+
+    cmd = "env TZ='" tz "' date +%z"
+    rc = (cmd | getline tz_offset)
+    close(cmd)
+
+    if (rc <= 0) {
+        print "Warning: failed to resolve TZID: " tz > "/dev/stderr"
+        return local_tz_offset
+    }
+
+    if (tz_offset !~ /^[+-][0-9]{4}$/) {
+        print "Warning: invalid timezone offset for TZID: " tz > "/dev/stderr"
+        return local_tz_offset
+    }
+
+    return parse_timezone_offset(tz_offset)
+}
+
+function datetimestring(input, offset, spec, year, month, day, hour, min, sec, stamp)
+{
+    spec  = match(input, "([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2}).*[\r]*", a);
+    year = a[1]
+    month = a[2]
+    day = a[3]
+    hour = a[4]
+    min = a[5]
+    sec = a[6]
+
+    stamp = mktime(year" "month" "day" "hour" "min" "sec);
+    lasttimestamp = stamp;
+
+    if (stamp <= 0) {
+        spec = gensub("([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2}).*[\r]*", "\\1-\\2-\\3 \\4:\\5", "g", input);
+        return spec;
+    }
+
+    stamp = stamp + offset * 60;
+    return strftime("%Y-%m-%d %a %H:%M", stamp);
+}
+
+function datestring(input, isenddate, spec, stamp)
+{
+    spec = gensub("([0-9]{4})([0-9]{2})([0-9]{2}).*[\r]*", "\\1 \\2 \\3 00 00 00", "g", input);
+    stamp = mktime(spec);
+
+    if (isenddate) {
+        stamp = stamp - 86400;
+        issameday = lasttimestamp == stamp
+    }
+
+    lasttimestamp = stamp
+
+    if (stamp < 0) {
+        if (isenddate)
+            return gensub("([0-9]{4})([0-9]{2})([0-9]{2}).*[\r]*", "\\1-\\2-\\3 00:00", "g", input);
+        else
+            return gensub("([0-9]{4})([0-9]{2})([0-9]{2}).*[\r]*", "\\1-\\2-\\3", "g", input);
+    }
+
+    return strftime("%Y-%m-%d %a", stamp);
+}
+
+function add_attendee(attendee, CN)
+{
+    if (match(attendee, /CN=([^;]+)/, m)) {
+        CN = tolower(m[1]);
+        people_attending[CN] = 1;
+    }
+}
+
+function fix_date_time()
+{
+    if (substr(date,1,10) == substr(end_date,1,10)) {
+        date1 = date
+        date2 = end_date
+        date = date "-" substr(end_date, length(end_date)-4)
+        end_date = ""
+    }
+}
+
+function are_we_going(attendee, CN)
+{
+    if (attending != attending_types["UNSET"])
+        return;
+
+    if (match(attendee, /CN=([^;]+)/, m)) {
+        CN = gensub("\"", "", "g", tolower(m[1]));
+        if (CN == tolower(author) || CN == tolower(emailaddress)) {
+            if (attendee ~ /PARTSTAT=ACCEPTED/)
+                attending = attending_types["ATTENDING"];
+            else if (attendee ~ /PARTSTAT=NEEDS-ACTION/)
+                attending = attending_types["NEEDS_ACTION"];
+            else
+                attending = attending_types["NOT_ATTENDING"];
+        }
+    }
+}

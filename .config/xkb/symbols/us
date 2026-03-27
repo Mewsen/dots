@@ -1,0 +1,40 @@
+partial alphanumeric_keys
+xkb_symbols "intldeiso" {
+    include "us(basic)"
+    name[Group1] = "INTL DE ISO";
+
+    // CapsLock -> Ctrl
+    key <CAPS> { [ Control_L ] };
+    modifier_map Control { <CAPS>, <LCTL>, <RCTL> };
+
+    // ISO < >| key -> Left Shift
+    key <LSGT> { [ Shift_L ] };
+
+    include "level3(ralt_switch)"
+
+    // Umlauts and ß using AltGr (Right Alt)
+    key <AD09> { [ o, O, odiaeresis, Odiaeresis ] }; // O key
+    key <AD07> { [ u, U, udiaeresis, Udiaeresis ] }; // U key (ISO row 2)
+    key <AD03> { [ e, E, EuroSign, acute ] };
+
+    key <AC01> { [ a, A, adiaeresis, Adiaeresis ] }; // A key
+    key <AC02> { [ s, S, ssharp, SSHARP ] };        // S key
+};
+
+xkb_symbols "intldeansi" {
+    include "us(basic)"
+    name[Group1] = "INTL DE ANSI";
+
+    // CapsLock -> Ctrl
+    key <CAPS> { [ Control_L ] };
+    modifier_map Control { <CAPS>, <LCTL>, <RCTL> };
+
+    include "level3(ralt_switch)"
+
+    // Umlauts and ß using AltGr (Right Alt)
+    key <AD07> { [         u,          U,    udiaeresis,       Udiaeresis ] };
+    key <AD09> { [         o,          O,    odiaeresis,       Odiaeresis ] };
+
+    key <AC01> { [         a,          A,    adiaeresis,       Adiaeresis ] };
+    key <AC02> { [         s,          S,        ssharp,          ssharp ] };
+};

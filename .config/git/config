@@ -1,0 +1,61 @@
+[user]
+name=Michael Tews
+email=michael@tews.dev
+signingkey=FC7BE6F43C844679
+[commit]
+gpgsign = true
+verbose = true
+[re.sonny.Commit]
+title-length-hint=50
+body-length-wrap=72
+auto-capitalize-title=true
+[column]
+ui = auto
+[branch]
+sort = -committerdate
+[tag]
+sort = version:refname
+gpgSign = true
+[init]
+defaultBranch = main
+[diff]
+algorithm = histogram
+colorMoved = plain
+mnemonicPrefix = true
+renames = true
+	tool = ediff
+[push]
+default = simple
+autoSetupRemote = true
+followTags = true
+[fetch]
+prune = true
+pruneTags = true
+all = true
+[help]
+autocorrect = prompt
+[rerere]
+enabled = true
+autoupdate = true
+[core]
+excludesfile = ~/.gitignore
+[rebase]
+autoSquash = true
+autoStash = true
+updateRefs = true
+[core]
+fsmonitor = true
+untrackedCache = true
+[merge]
+conflictstyle = zdiff3 
+[pull]
+rebase = true
+
+
+
+[url "git@github.com:tresorlabs"]
+    insteadOf = https://github.com/tresorlabs
+[github]
+	user = mewsen
+[difftool]
+	prompt = false

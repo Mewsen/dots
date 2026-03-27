@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+	echo "Usage: $0 [-f pacman-packages.txt]"
+	echo "Default: $HOME/.local/share/pacman-packages.txt"
+	exit 1
+}
+
+DEFAULT_PACKAGE_FILE="$HOME/.local/share/pacman-packages.txt"
+PACKAGE_FILE="$DEFAULT_PACKAGE_FILE"
+
+while getopts ":f:" opt; do
+	case "$opt" in
+	f) PACKAGE_FILE="$OPTARG" ;;
+	*) usage ;;
+	esac
+done
+
+# Expand ~ if the user passed it via -f
+PACKAGE_FILE="${PACKAGE_FILE/#\~/$HOME}"
+
+command -v pacman >/dev/null 2>&1 || {
+	echo "Error: pacman not found in PATH." >&2
+	exit 1
+}
+
+command -v paru >/dev/null 2>&1 || {
+	echo "Error: paru not found in PATH." >&2
+	exit 1
+}
+
+# Ensure default/custom directory exists
+mkdir -p "$(dirname "$PACKAGE_FILE")"
+
+# Initialize file from current explicit installs if it does not exist
+if [[ ! -f "$PACKAGE_FILE" ]]; then
+	echo "Package file not found, initializing from current system..."
+	pacman -Qqe | sort -u >"$PACKAGE_FILE"
+fi
+
+tmp_desired="$(mktemp)"
+tmp_installed="$(mktemp)"
+tmp_missing="$(mktemp)"
+tmp_extra="$(mktemp)"
+
+cleanup() {
+	rm -f "$tmp_desired" "$tmp_installed" "$tmp_missing" "$tmp_extra"
+}
+trap cleanup EXIT
+
+normalize_package_file() {
+	sed 's/#.*//' "$PACKAGE_FILE" |
+		sed 's/^[[:space:]]*//; s/[[:space:]]*$//' |
+		grep -v '^[[:space:]]*$' |
+		sort -u
+}
+
+normalize_package_file >"$tmp_desired"
+pacman -Qqe | sort -u >"$tmp_installed"
+
+comm -23 "$tmp_desired" "$tmp_installed" >"$tmp_missing"
+comm -13 "$tmp_desired" "$tmp_installed" >"$tmp_extra"
+
+echo
+echo "=== Summary ==="
+echo "Desired packages file : $PACKAGE_FILE"
+echo "Missing packages      : $(wc -l <"$tmp_missing")"
+echo "Extra installed pkgs  : $(wc -l <"$tmp_extra")"
+echo
+
+if [[ -s "$tmp_missing" ]]; then
+	echo "Packages missing and available for install:"
+	cat "$tmp_missing"
+	echo
+	read -r -p "Install all missing packages with paru? [y/N] " answer </dev/tty
+	if [[ "$answer" =~ ^[Yy]$ ]]; then
+		mapfile -t missing_packages <"$tmp_missing"
+		paru -S --needed "${missing_packages[@]}"
+	else
+		echo "Skipping installation of missing packages."
+	fi
+else
+	echo "No missing packages."
+fi
+
+echo
+
+if [[ -s "$tmp_extra" ]]; then
+	echo "Processing installed packages not found in package file..."
+	echo
+
+	to_remove=()
+
+	exec 3<"$tmp_extra"
+
+	while IFS= read -r pkg <&3; do
+		[[ -z "$pkg" ]] && continue
+
+		while true; do
+			read -r -p "Package '$pkg' is installed but not in the list. [r]emove / [a]dd to file / [s]kip? " choice </dev/tty
+			case "$choice" in
+			[Rr])
+				to_remove+=("$pkg")
+				echo "Marked '$pkg' for removal"
+				break
+				;;
+			[Aa])
+				if ! grep -Fxq "$pkg" "$PACKAGE_FILE"; then
+					echo "$pkg" >>"$PACKAGE_FILE"
+					echo "Added '$pkg' to $PACKAGE_FILE"
+				else
+					echo "'$pkg' is already in $PACKAGE_FILE"
+				fi
+				break
+				;;
+			[Ss] | "")
+				echo "Skipped '$pkg'"
+				break
+				;;
+			*)
+				echo "Please enter r, a, or s."
+				;;
+			esac
+		done
+	done
+
+	exec 3<&-
+
+	echo
+	if ((${#to_remove[@]} > 0)); then
+		echo "Packages marked for removal:"
+		printf '  %s\n' "${to_remove[@]}"
+		echo
+
+		read -r -p "Remove all marked packages now? [y/N] " confirm </dev/tty
+		if [[ "$confirm" =~ ^[Yy]$ ]]; then
+			paru -Rns "${to_remove[@]}"
+		else
+			echo "Skipping removal of marked packages."
+		fi
+	else
+		echo "No packages were marked for removal."
+	fi
+
+	echo
+	echo "Sorting and de-duplicating package file..."
+	normalize_package_file >"${PACKAGE_FILE}.tmp"
+	mv "${PACKAGE_FILE}.tmp" "$PACKAGE_FILE"
+else
+	echo "No extra installed packages."
+fi
+
+echo
+echo "Done."

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xkbConfigRegistry SYSTEM "xkb.dtd">
+<xkbConfigRegistry version="1.1">
+  <layoutList>
+    <layout>
+      <configItem>
+        <name>us</name>
+      </configItem>
+      <variantList>
+        <variant>
+          <configItem>
+            <name>intldeansi</name>
+            <shortDescription>US International (DE ANSI)</shortDescription>
+            <description>US International keyboard layout with ANSI keys, suitable for typing accented characters used in German and other European languages.</description>
+          </configItem>
+        </variant>
+        <variant>
+          <configItem>
+            <name>intldeiso</name>
+            <shortDescription>US International (DE ISO)</shortDescription>
+            <description>US International keyboard layout with ISO keys, suitable for typing accented characters used in German and other European languages.</description>
+          </configItem>
+        </variant>
+      </variantList>
+    </layout>
+  </layoutList>
+</xkbConfigRegistry>
